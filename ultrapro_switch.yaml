@@ -1,0 +1,70 @@
+esphome:
+  name: ultrapro01
+  friendly_name:  ultrapro01
+
+bk72xx:
+  board: wb3s
+  framework:
+    version: latest
+
+logger:
+  #level: "VERY_VERBOSE"
+api:
+ota:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "Switch Fallback"
+    password: !secret wifi_ap_password
+
+web_server:
+captive_portal:
+
+# P26 = Relay
+# P24 = LED
+# P6 = Reset Button
+# P9 = Off Button
+# P8 = On Button
+# P23 = Occupancy LD2410
+
+status_led:
+  id: led_status
+  pin:
+    number: P24
+
+switch:
+  - platform: gpio
+    name: "Switch"
+    id: relay
+    pin: P26 # Relay
+
+binary_sensor:
+  - platform: gpio
+    id: on_button
+    pin:
+      number: P8 # On Button
+      inverted: true
+    on_click:
+      - switch.turn_on: relay
+  - platform: gpio
+    id: off_button
+    pin:
+      number: P9 # Off Button
+      inverted: true
+    on_click:
+      - switch.turn_off: relay
+  - platform: gpio
+    id: reset_button
+    pin:
+      number: P6 # Reset Button
+      inverted: true
+    #on_click:
+      #- TODO
+  - platform: gpio
+    pin: GPIO23
+    name: "Occupancy"
+    id: occupancy
+    device_class: occupancy
+    
